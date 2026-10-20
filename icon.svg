@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#2f6df6"/>
+  <text x="256" y="200" font-family="Georgia, 'Times New Roman', serif" font-size="150"
+        fill="#ffffff" text-anchor="middle" font-weight="600">∫</text>
+  <text x="256" y="360" font-family="Georgia, 'Times New Roman', serif" font-size="112"
+        fill="#ffffff" text-anchor="middle" font-weight="500" opacity="0.92">dx</text>
+</svg>
