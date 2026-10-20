@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f6f8">
+<title>考研数学二 · 复习面板</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="数学二复习">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+:root{
+  --bg:#f4f5f8; --card:#ffffff; --text:#17191d; --muted:#6b7280; --line:#e5e7eb;
+  --accent:#2f6df6; --red:#e5484d; --amber:#e8930c; --green:#12946b; --purple:#7c5cff;
+  --r:16px; --sh:0 1px 2px rgba(16,24,40,.04),0 4px 18px rgba(16,24,40,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0e1014; --card:#171a20; --text:#e8eaef; --muted:#9aa1ad; --line:#262b33;
+    --accent:#6b95ff; --red:#ff6b6b; --amber:#f7b955; --green:#3ddc97; --purple:#a58cff;
+    --sh:0 1px 2px rgba(0,0,0,.35),0 6px 22px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+sup,sub{font-size:.72em;line-height:0}
+sup{vertical-align:super}
+sub{vertical-align:sub}
+.tex{white-space:nowrap}
+.tex .katex{font-size:1.06em}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 14px 60px}
+@media(min-width:720px){.wrap{padding:24px 24px 80px}}
+
+/* ---------- header ---------- */
+header.top{
+  position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:saturate(180%) blur(12px);-webkit-backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid var(--line);margin:0 -14px 16px;padding:10px 14px;
+}
+@media(min-width:720px){header.top{margin:0 -24px 20px;padding:12px 24px}}
+.top-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.top h1{font-size:16px;margin:0;font-weight:650;letter-spacing:.2px}
+.top .updated{font-size:12px;color:var(--muted);margin-left:auto}
+
+/* ---------- notice ---------- */
+.notice{
+  display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,var(--amber) 12%,var(--card));
+  border:1px solid color-mix(in srgb,var(--amber) 35%,var(--line));border-radius:12px;
+  padding:10px 12px;font-size:13px;margin-bottom:16px;color:var(--text);
+}
+.notice b{color:var(--amber)}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:16px}
+@media(min-width:860px){.hero{grid-template-columns:260px 1fr}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.ringbox{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:6px}
+.ring{width:120px;height:120px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ring .bgc{stroke:var(--line)}
+.ring .fgc{stroke:var(--accent);transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)}
+.ring-val{position:relative;margin-top:-84px;margin-bottom:32px;font-size:24px;font-weight:700;letter-spacing:-.5px}
+.ring-cap{font-size:12px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:560px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{padding:14px 16px;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.stat b{font-size:26px;font-weight:700;letter-spacing:-.6px;line-height:1.15}
+.stat span{font-size:12px;color:var(--muted)}
+.stat.urgent b{color:var(--red)}
+
+/* ---------- section ---------- */
+h2.sec{font-size:14px;font-weight:650;margin:26px 0 12px;display:flex;align-items:center;gap:8px;letter-spacing:.3px}
+h2.sec::before{content:"";width:3px;height:15px;border-radius:2px;background:var(--accent)}
+h2.sec small{font-weight:400;color:var(--muted);font-size:12px;margin-left:auto}
+
+/* ---------- blocks ---------- */
+.grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+.blk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.blk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+.blk[data-s="done"]::before{background:var(--green)}
+.blk[data-s="doing"]::before{background:var(--accent)}
+.blk[data-s="todo"]::before{background:var(--line)}
+.blk[data-s="unknown"]::before{background:var(--amber)}
+.blk-h{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.blk-id{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.blk-n{font-size:14px;font-weight:600;flex:1;line-height:1.35}
+.tag{font-size:10px;padding:1px 7px;border-radius:999px;font-weight:600;white-space:nowrap}
+.tag.done{background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green)}
+.tag.doing{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
+.tag.todo{background:color-mix(in srgb,var(--muted) 14%,transparent);color:var(--muted)}
+.tag.unknown{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+.blk-sub{font-size:11px;color:var(--muted);margin-bottom:9px}
+.bar{height:5px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--accent);transition:width .7s}
+.blk[data-s="done"] .bar i{background:var(--green)}
+.blk[data-s="unknown"] .bar i{background:var(--amber)}
+.blk-f{display:flex;justify-content:space-between;gap:8px;margin-top:7px;font-size:11px;color:var(--muted)}
+.blk-f .weak{color:var(--red);text-align:right}
+
+/* ---------- bars (causes) ---------- */
+.causes{display:flex;flex-direction:column;gap:11px;padding:16px}
+.cause{display:grid;grid-template-columns:82px 1fr 40px;align-items:center;gap:10px;font-size:13px}
+.cause .lb{color:var(--muted);font-size:12px}
+.cause .tr{height:9px;border-radius:99px;background:var(--line);overflow:hidden}
+.cause .tr i{display:block;height:100%;border-radius:99px;transition:width .8s}
+.cause .vl{text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted)}
+
+/* ---------- families ---------- */
+.fams{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:640px){.fams{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:960px){.fams{grid-template-columns:repeat(3,1fr)}}
+.fam{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--sh);border-left:3px solid}
+.fam.hi{border-left-color:var(--red)}
+.fam.mid{border-left-color:var(--amber)}
+.fam.ok{border-left-color:var(--green)}
+.fam-t{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.fam-d{font-size:12px;color:var(--muted);line-height:1.55}
+.fam-n{font-size:11px;color:var(--muted);margin-top:8px;font-variant-numeric:tabular-nums}
+
+/* ---------- filters ---------- */
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.chip{
+  font:inherit;font-size:12px;padding:6px 13px;border-radius:999px;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);color:var(--muted);transition:.15s;
+}
+.chip:active{transform:scale(.96)}
+.chip.on{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
+
+/* ---------- error cards ---------- */
+.errs{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:820px){.errs{grid-template-columns:repeat(2,1fr)}}
+.err{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--sh)}
+.err-h{display:flex;gap:9px;align-items:flex-start;margin-bottom:7px}
+.err-n{font-size:11px;color:var(--muted);flex:none;font-variant-numeric:tabular-nums;padding-top:2px}
+.err-q{font-size:14px;font-weight:600;line-height:1.45;flex:1}
+.mast{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:700;flex:none;white-space:nowrap}
+.mast.fuzzy{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+.mast.ok{background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green)}
+.mast.no{background:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red)}
+.err-pt{font-size:11px;color:var(--accent);margin-bottom:8px}
+.err-row{font-size:12.5px;line-height:1.6;display:grid;grid-template-columns:44px 1fr;gap:6px;margin-top:5px}
+.err-row .k{color:var(--muted);font-size:11px;padding-top:2px}
+.err-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.tg{font-size:10px;padding:1px 7px;border-radius:6px;background:color-mix(in srgb,var(--red) 10%,transparent);color:var(--red)}
+
+/* ---------- tasks ---------- */
+.tasks{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:6px 16px 14px}
+.task{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.task:last-of-type{border-bottom:0}
+.task input{appearance:none;flex:none;width:21px;height:21px;margin:1px 0 0;border:2px solid var(--line);border-radius:7px;cursor:pointer;transition:.18s;position:relative}
+.task input:checked{background:var(--green);border-color:var(--green)}
+.task input:checked::after{content:"";position:absolute;left:5.5px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg)}
+.task-b{flex:1;min-width:0}
+.task-t{font-size:13.5px;font-weight:550;line-height:1.45;transition:.2s}
+.task:has(input:checked) .task-t{color:var(--muted);text-decoration:line-through}
+.task-m{font-size:11.5px;color:var(--muted);margin-top:3px}
+.min{font-size:11px;color:var(--muted);flex:none;padding-top:2px;font-variant-numeric:tabular-nums}
+.task-prog{display:flex;align-items:center;gap:10px;padding-top:12px;font-size:12px;color:var(--muted)}
+.task-prog .bar{flex:1}
+.btn{font:inherit;font-size:12px;padding:5px 12px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.btn:active{transform:scale(.97)}
+
+/* ---------- weeks ---------- */
+.weeks{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.weeks::-webkit-scrollbar{height:5px}
+.weeks::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.wk{flex:none;width:158px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px;box-shadow:var(--sh)}
+.wk.now{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent),var(--sh)}
+.wk-w{font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+.wk.now .wk-w b{color:var(--accent)}
+.wk-d{font-size:10.5px;color:var(--muted);margin:2px 0 7px;font-variant-numeric:tabular-nums}
+.wk-t{font-size:12.5px;font-weight:550;line-height:1.45}
+
+/* ---------- misc ---------- */
+.skip{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.skip span{font-size:11px;padding:4px 10px;border-radius:8px;background:color-mix(in srgb,var(--muted) 9%,transparent);color:var(--muted);text-decoration:line-through}
+footer{text-align:center;font-size:11.5px;color:var(--muted);margin-top:38px;line-height:1.9}
+footer code{background:color-mix(in srgb,var(--muted) 12%,transparent);padding:1px 6px;border-radius:5px;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <h1>📐 考研数学（二）· 复习面板</h1>
+    <div class="updated" id="updated"></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="panel ringbox">
+      <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="bgc" cx="60" cy="60" r="52"></circle>
+        <circle class="fgc" id="ringFg" cx="60" cy="60" r="52"></circle>
+      </svg>
+      <div class="ring-val" id="ringVal">0%</div>
+      <div class="ring-cap">知识体系总进度</div>
+    </div>
+    <div class="stats">
+      <div class="panel stat urgent"><b id="s-days">--</b><span>天后初试</span></div>
+      <div class="panel stat"><b id="s-blocks">4/15</b><span>已完成知识块</span></div>
+      <div class="panel stat"><b id="s-fuzzy">6</b><span>待巩固错题</span></div>
+      <div class="panel stat"><b id="s-hours">25</b><span>周有效时长(h)</span></div>
+    </div>
+  </div>
+
+  <!-- BLOCKS -->
+  <h2 class="sec">知识体系覆盖 <small>武忠祥基础篇 · 15 块 · 试考年目标：全部至少 ◐</small></h2>
+  <div class="grid" id="blocks"></div>
+  <div class="skip">
+    <span>无穷级数</span><span>空间解析几何</span><span>三重积分</span>
+    <span>曲线曲面积分</span><span>概率论</span><span>伯努利方程</span>
+  </div>
+
+  <!-- CAUSES -->
+  <h2 class="sec">错因分布 <small>11 题共 14 次归类</small></h2>
+  <div class="panel causes" id="causes"></div>
+
+  <!-- FAMILIES -->
+  <h2 class="sec">薄弱点家族 <small>单点看不清，聚合后信号明确</small></h2>
+  <div class="fams" id="fams"></div>
+
+  <!-- ERRORS -->
+  <h2 class="sec">错题本 <small>点标签筛选</small></h2>
+  <div class="chips" id="chips"></div>
+  <div class="errs" id="errs"></div>
+
+  <!-- TASKS -->
+  <h2 class="sec">今日 30 分钟清单 <small>勾选会自动保存</small></h2>
+  <div class="tasks" id="tasks">
+    <div class="task-prog">
+      <span id="tp-label">0 / 5</span>
+      <div class="bar"><i id="tp-bar" style="width:0%"></i></div>
+      <button class="btn" id="resetTasks">重置</button>
+    </div>
+  </div>
+
+  <!-- WEEKS -->
+  <h2 class="sec">9 周时间表 <small>左右滑动</small></h2>
+  <div class="weeks" id="weeks"></div>
+
+  <footer>
+    数据更新 <span id="f-updated"></span> ｜ 数据来源：<code>02-错题与薄弱点本.md</code><br>
+    单文件离线面板 · 手机浏览器可直接打开 · 勾选状态存在本机
+  </footer>
+</div>
+
+<script>
+/* ==================== 数据区（改这里即可更新整个面板） ==================== */
+const DATA = {
+  examDate: "2026-12-19T08:30:00+08:00",
+  updated: "2026-10-18",
+
+  blocks: [
+    { id:"①", name:"函数、极限、连续",       subj:"高数·第1章", s:"done", p:100,
+      pts:["函数概念与性质","数列/函数极限","无穷小量阶的比较","两个重要极限","连续性与间断点分类","闭区间连续性质"] },
+    { id:"②", name:"导数与微分",             subj:"高数·第2章", s:"done", p:100,
+      pts:["导数与微分概念","导数公式与求导法则","高阶导数","复合/隐函数/参数方程求导","导数应用"] },
+    { id:"③", name:"微分中值定理及导数应用", subj:"高数·第3章", s:"done", p:100,
+      pts:["罗尔/拉格朗日/柯西/泰勒","洛必达法则","极值与最值","凹凸性与拐点","渐近线","方程根与不等式","中值定理证明"] },
+    { id:"④", name:"不定积分",               subj:"高数·第4章", s:"done", p:100,
+      weak:"备注：有理函数积分可回看",
+      pts:["概念与性质","基本积分公式","换元积分法","分部积分法","三类常见可积函数"] },
+    { id:"⑤", name:"定积分与反常积分",       subj:"高数·第5章", s:"doing", p:65,
+      weak:"弱：$F(a)=0$ · 找瑕点",
+      pts:["定积分的概念","定积分的性质","积分上限的函数","定积分的计算","无穷区间反常积分","无界函数反常积分","敛散性判别"] },
+    { id:"⑥", name:"定积分的应用",           subj:"高数·第6章", s:"todo", p:0,
+      pts:["平面图形面积","旋转体体积","弧长","平行截面体积","物理应用：功/压力","函数平均值"] },
+    { id:"⑦", name:"微分方程",               subj:"高数·第7章", s:"todo", p:0,
+      pts:["基本概念","一阶：可分离/齐次/线性","可降阶高阶","二阶常系数齐次","二阶常系数非齐次","应用题"] },
+    { id:"⑧", name:"多元函数微分学",         subj:"高数·第8章", s:"todo", p:0,
+      pts:["多元极限与连续","偏导数","全微分","复合函数微分法","隐函数微分法","无条件极值","条件极值与拉格朗日"] },
+    { id:"⑨", name:"二重积分",               subj:"高数·第9章", s:"todo", p:0,
+      pts:["概念及性质","直角坐标计算","交换积分次序","极坐标计算","对称性简化"] },
+    { id:"⑩", name:"行列式",                 subj:"线代·第1章", s:"todo", p:0,
+      pts:["定义与性质","按行列展开","特殊行列式","与矩阵运算结合"] },
+    { id:"⑪", name:"矩阵",                   subj:"线代·第2章", s:"todo", p:0,
+      pts:["矩阵运算","逆矩阵","矩阵的秩","初等变换","分块矩阵"] },
+    { id:"⑫", name:"向量",                   subj:"线代·第3章", s:"todo", p:0,
+      pts:["线性相关与无关","极大无关组与秩","内积与正交","施密特正交化","正交矩阵"] },
+    { id:"⑬", name:"线性方程组",             subj:"线代·第4章", s:"todo", p:0,
+      pts:["齐次基础解系","非齐次通解","解的判定","同解方程组"] },
+    { id:"⑭", name:"特征值与特征向量",       subj:"线代·第5章", s:"todo", p:0,
+      pts:["定义与求法","特征值性质","相似与对角化","实对称矩阵"] },
+    { id:"⑮", name:"二次型",                 subj:"线代·第6章", s:"todo", p:0,
+      pts:["矩阵表示与合同","配方法化标准形","正交变换法","惯性定理","正定性判定"] }
+  ],
+
+  causes: [
+    { name:"概念不清", n:7, color:"var(--red)"   },
+    { name:"公式记错", n:4, color:"var(--amber)" },
+    { name:"计算失误", n:1, color:"var(--purple)"},
+    { name:"未提及",   n:2, color:"var(--muted)" }
+  ],
+
+  families: [
+    { t:"A · 定积分概念边界", lvl:"hi",  n:3, pts:"3 / 3 模糊",
+      d:"分不清「常数 / 函数 / 反常积分」三者的适用域。当前唯一高危区。" },
+    { t:"B · 变限积分运算",   lvl:"mid", n:3, pts:"2 / 3 模糊",
+      d:"会套公式，但不理解公式为什么长这样，含参时不会先换元。" },
+    { t:"C · 积分技巧",       lvl:"ok",  n:2, pts:"0 / 2 模糊",
+      d:"分部积分、N-L 公式都已过关，不需要再刷计算量。" },
+    { t:"D · 积分中值定理",   lvl:"mid", n:2, pts:"1 / 2 模糊",
+      d:"会背会用，但前提条件记不牢，易漏 $\\int g=0$ 的讨论。" },
+    { t:"E · 数学符号",       lvl:"ok",  n:1, pts:"0 / 1 模糊",
+      d:"竖线单/双参数已澄清。" }
+  ],
+
+  errors: [
+    { n:1, q:"$\\left[\\int_a^b f(x)\\,dx\\right]' = f(b)-f(a)$ 成立吗", pt:"定积分的概念", cause:["概念不清","公式记错"], m:"模糊",
+      gap:"把定积分当成函数，混淆 $f$ 与原函数 $F$", fix:"定积分是常数，导数为 0；N-L 里的 $F$ 是原函数" },
+    { n:2, q:"$F(0)=-1$ 为什么错", pt:"变上限积分的连续性", cause:["计算失误","概念不清"], m:"模糊",
+      gap:"丢了积分产生的常数项 $+1$，不知道 $F(a)=0$", fix:"$F(x)=\\int_0^x f \\Rightarrow F(0)=0$；$x\\ge 0$ 段为 $xe^x-e^x+1$" },
+    { n:3, q:"$\\left[\\int_x^{2x} f(t)\\,dt\\right]'$ 怎么算", pt:"变限积分求导（链式）", cause:["公式记错"], m:"已掌握",
+      gap:"漏乘上下限的内部导数", fix:"$f(v)v'-f(u)u' \\Rightarrow 2f(2x)-f(x)$" },
+    { n:4, q:"$\\int_1^2 f(x+2t)\\,dt$ 如何求导", pt:"含参被积函数的变限求导", cause:[], m:"模糊",
+      gap:"被积函数里藏着 $x$，不知道要先换元", fix:"令 $u=x+2t \\Rightarrow \\frac{1}{2}\\int_{x+2}^{x+4} f(u)\\,du \\Rightarrow \\frac{1}{2}[f(x+4)-f(x+2)]$" },
+    { n:5, q:"为什么要与 $(1-x)^{1/2}$ 作比较", pt:"反常积分敛散性判别", cause:["概念不清"], m:"模糊",
+      gap:"不会找瑕点、不会构造等价的 $p$ 积分", fix:"瑕点 $x=1$；分母 $=\\sqrt{x}\\cdot\\sqrt{1-x}$，$\\sqrt{x}\\to 1$ 可提走 $\\Rightarrow$ 等价 $(1-x)^{-1/2}$，$p=\\frac{1}{2}<1$ 收敛" },
+    { n:6, q:"$f$ 在 $b$ 处无穷大还适用第一类间断点定理吗", pt:"可积条件与间断点分类", cause:["概念不清"], m:"模糊",
+      gap:"不清楚第一类间断点定义，混淆黎曼积分与反常积分", fix:"无穷间断点 = 第二类 $\\Rightarrow$ 无界 $\\Rightarrow$ 非黎曼可积，转反常积分处理" },
+    { n:7, q:"$\\int_0^x t e^t\\,dt$ 的分部积分", pt:"分部积分法", cause:["公式记错"], m:"已掌握",
+      gap:"把 $\\int v\\,du$ 写成了 $\\int u\\,dv$", fix:"$u=t,\\ dv=e^t dt \\Rightarrow xe^x-e^x+1$" },
+    { n:8, q:"$\\int_1^x (2t+e-2)\\,dt$", pt:"牛顿-莱布尼茨公式", cause:[], m:"已掌握",
+      gap:"—", fix:"$x^2+ex-2x+1-e$" },
+    { n:9, q:"$\\int f g = f(\\xi)\\int g$ 是什么意思", pt:"积分第一中值定理（推广）", cause:["概念不清","公式记错"], m:"模糊",
+      gap:"不知道定理前提，不会推导", fix:"前提 $f$ 连续、$g$ 不变号；用加权平均值 $f(\\xi)$ 提出积分号外" },
+    { n:10, q:"重新梳理中值定理的推导", pt:"积分第一中值定理的证明", cause:["概念不清"], m:"已掌握",
+      gap:"曾忽略 $\\int g=0$ 的讨论", fix:"最值定理 $\\to$ 乘 $g$ $\\to$ 积分 $\\to$ 除 $\\int g$ $\\to$ 介值定理 $\\to$ 移项" },
+    { n:11, q:"竖线 $\\big|_{u=x}$（单参数）怎么理解", pt:"求值符号", cause:["概念不清"], m:"已掌握",
+      gap:"混淆单参数代入与双参数求差", fix:"单参数 = 直接代入求值；双参数 = 上限值 − 下限值" }
+  ],
+
+  tasks: [
+    { id:"t1", t:"变限积分求导四连", m:"默写公式 + $\\int_x^{x^2} f(t)\\,dt$ ／ $\\int_0^{2x} f(t)\\,dt$ ／ $\\int_0^1 f(x+3t)\\,dt$", min:8, tag:"B 家族" },
+    { id:"t2", t:"三个表达式辨析默写", m:"$\\int_a^b f = C$ 导数为 0 ｜ $(\\int_a^x f)' = f(x)$ ｜ $F(a)=0$", min:5, tag:"A 家族" },
+    { id:"t3", t:"反常积分瑕点定位", m:"只做三步：找瑕点 → 写等价 p 积分 → 判敛散，不算值", min:6, tag:"A 家族" },
+    { id:"t4", t:"可积条件速记", m:"有界是门槛；第二类间断点直接转反常积分", min:5, tag:"A 家族" },
+    { id:"t5", t:"积分第一中值定理默写", m:"内容 + 两个前提 + 完整推导（含 $\\int g = 0$ 的讨论）", min:6, tag:"D 家族" }
+  ],
+
+  weeks: [
+    { w:"W1", d:"10/19–10/25", t:"⑤ 定积分与反常积分收尾 · 清家族 A", now:true },
+    { w:"W2", d:"10/26–11/1", t:"⑥ 定积分的应用 + 第5章复盘" },
+    { w:"W3", d:"11/2–11/8",  t:"⑦ 微分方程" },
+    { w:"W4", d:"11/9–11/15", t:"⑧ 多元函数微分学" },
+    { w:"W5", d:"11/16–11/22",t:"⑨ 二重积分" },
+    { w:"W6", d:"11/23–11/29",t:"⑩ 行列式 + ⑪ 矩阵" },
+    { w:"W7", d:"11/30–12/6", t:"⑫ 向量 + ⑬ 线性方程组" },
+    { w:"W8", d:"12/7–12/13", t:"⑭ 特征值 + ⑮ 二次型" },
+    { w:"W9", d:"12/14–12/18",t:"全科串讲 + 真题摸底" }
+  ]
+};
+
+/* ==================== 公式渲染（KaTeX + 离线降级） ==================== */
+
+function escHtml(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* 降级渲染：CDN 不可用时把常见 LaTeX 转成 HTML 上下标，保证可读 */
+function texFallback(src){
+  let s = String(src);
+  const rules = [
+    [/\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, "($1)/($2)"],
+    [/\\sqrt\s*\{([^{}]*)\}/g, "√($1)"],
+    [/\\left|\\right/g, ""],
+    [/\\big/g, ""],
+    [/\\Rightarrow/g, "⇒"],
+    [/\\rightarrow/g, "→"],
+    [/\\times/g, "×"],
+    [/\\cdot/g, "·"],
+    [/\\pm(?![a-zA-Z])/g, "±"],
+    [/\\int(?![a-zA-Z])/g, "∫"],
+    [/\\infty/g, "∞"],
+    [/\\xi/g, "ξ"],
+    [/\\sum/g, "Σ"],
+    [/\\le(?![a-zA-Z])/g, "≤"],
+    [/\\ge(?![a-zA-Z])/g, "≥"],
+    [/\\ne(?![a-zA-Z])/g, "≠"],
+    [/\\to(?![a-zA-Z])/g, "→"],
+    [/\\[,;:!]/g, " "],
+    [/\\ /g, " "]
+  ];
+  rules.forEach(function(r){ s = s.replace(r[0], r[1]); });
+  s = s.replace(/\^\{([^{}]*)\}/g, "<sup>$1</sup>");
+  s = s.replace(/_\{([^{}]*)\}/g, "<sub>$1</sub>");
+  s = s.replace(/\^(\w)/g, "<sup>$1</sup>");
+  s = s.replace(/_(\w)/g, "<sub>$1</sub>");
+  s = s.replace(/\\[a-zA-Z]+/g, function(m){ return m.slice(1); });
+  s = s.replace(/[{}]/g, "");
+  return s;
+}
+
+/* 把含 $...$ 的字符串转成 HTML；公式片段带 data-tex 供 KaTeX 替换 */
+function md(str){
+  if (str == null) return "";
+  const s = String(str);
+  if (s.indexOf("$") === -1) return escHtml(s);
+  let out = "", i = 0;
+  while (true){
+    const a = s.indexOf("$", i);
+    if (a === -1){ out += escHtml(s.slice(i)); break; }
+    out += escHtml(s.slice(i, a));
+    const b = s.indexOf("$", a + 1);
+    if (b === -1){ out += escHtml(s.slice(a)); break; }
+    const t = s.slice(a + 1, b);
+    out += '<span class="tex" data-tex="' + escHtml(t) + '">' + texFallback(t) + "</span>";
+    i = b + 1;
+  }
+  return out;
+}
+
+function typeset(){
+  if (!window.katex) return;
+  document.querySelectorAll(".tex[data-tex]").forEach(function(el){
+    try {
+      katex.render(el.getAttribute("data-tex"), el, { throwOnError: false, displayMode: false });
+      el.removeAttribute("data-tex");
+    } catch (e) { /* 保留降级结果 */ }
+  });
+}
+
+/* KaTeX 多源加载：jsdelivr → unpkg → bootcdn，全失败就静默降级 */
+(function(){
+  const V = "0.16.11";
+  const css = [
+    "https://cdn.jsdelivr.net/npm/katex@" + V + "/dist/katex.min.css",
+    "https://unpkg.com/katex@" + V + "/dist/katex.min.css",
+    "https://cdn.bootcdn.net/ajax/libs/KaTeX/" + V + "/katex.min.css"
+  ];
+  const js = [
+    "https://cdn.jsdelivr.net/npm/katex@" + V + "/dist/katex.min.js",
+    "https://unpkg.com/katex@" + V + "/dist/katex.min.js",
+    "https://cdn.bootcdn.net/ajax/libs/KaTeX/" + V + "/katex.min.js"
+  ];
+  (function nextCss(i){
+    if (i >= css.length) return;
+    const l = document.createElement("link");
+    l.rel = "stylesheet"; l.href = css[i];
+    l.onerror = function(){ nextCss(i + 1); };
+    document.head.appendChild(l);
+  })(0);
+  (function nextJs(i){
+    if (i >= js.length) return;
+    const sc = document.createElement("script");
+    sc.src = js[i];
+    sc.onload = function(){ typeset(); };
+    sc.onerror = function(){ nextJs(i + 1); };
+    document.head.appendChild(sc);
+  })(0);
+})();
+
+/* ==================== 渲染 ==================== */
+const $ = s => document.querySelector(s);
+
+/* 更新日期 */
+$("#updated").textContent = "更新 " + DATA.updated;
+$("#f-updated").textContent = DATA.updated;
+
+/* 倒计时 */
+(function(){
+  const exam = new Date(DATA.examDate);
+  const days = Math.ceil((exam - Date.now()) / 86400000);
+  $("#s-days").textContent = days > 0 ? days : (days === 0 ? "今天" : "已考");
+})();
+
+/* 进度环 */
+(function(){
+  const started = DATA.blocks.filter(b => b.s !== "todo");
+  const total = DATA.blocks.reduce((a,b) => a + b.p, 0) / DATA.blocks.length;
+  const pct = Math.round(total);
+  const C = 2 * Math.PI * 52;
+  const ring = $("#ringFg");
+  ring.style.strokeDasharray = C;
+  ring.style.strokeDashoffset = C;
+  requestAnimationFrame(() => { ring.style.strokeDashoffset = C * (1 - total/100); });
+  $("#ringVal").textContent = pct + "%";
+  $("#s-blocks").textContent = DATA.blocks.filter(b => b.s === "done").length + "/" + DATA.blocks.length;
+})();
+
+/* 统计 */
+$("#s-fuzzy").textContent = DATA.errors.filter(e => e.m === "模糊").length;
+
+/* 知识块 */
+$("#blocks").innerHTML = DATA.blocks.map(b => {
+  const st = { done:"已完成", doing:"进行中", todo:"未开始", unknown:"待确认" }[b.s];
+  const weak = b.weak ? `<span class="weak">${md(b.weak)}</span>` : `<span>${b.pts.length} 个知识点</span>`;
+  return `<div class="blk" data-s="${b.s}">
+    <div class="blk-h">
+      <span class="blk-id">${b.id}</span>
+      <span class="blk-n">${b.name}</span>
+      <span class="tag ${b.s}">${st}</span>
+    </div>
+    <div class="blk-sub">${b.subj} · ${b.pts.length} 个知识点</div>
+    <div class="bar"><i style="width:${b.p}%"></i></div>
+    <div class="blk-f"><span>${b.p}%</span>${weak}</div>
+  </div>`;
+}).join("");
+
+/* 错因 */
+(function(){
+  const max = Math.max(...DATA.causes.map(c => c.n));
+  $("#causes").innerHTML = DATA.causes.map(c => `
+    <div class="cause">
+      <span class="lb">${c.name}</span>
+      <div class="tr"><i style="width:${c.n/max*100}%;background:${c.color}"></i></div>
+      <span class="vl">${c.n} 次</span>
+    </div>`).join("");
+})();
+
+/* 家族 */
+$("#fams").innerHTML = DATA.families.map(f => `
+  <div class="fam ${f.lvl}">
+    <div class="fam-t"><span class="dot" style="background:${{hi:"var(--red)",mid:"var(--amber)",ok:"var(--green)"}[f.lvl]}"></span>${f.t}</div>
+    <div class="fam-d">${md(f.d)}</div>
+    <div class="fam-n">${f.n} 题 · ${f.pts}</div>
+  </div>`).join("");
+
+/* 错题筛选 */
+(function(){
+  const chips = [
+    { k:"all",   l:"全部 11" },
+    { k:"模糊",  l:"模糊 6" },
+    { k:"已掌握",l:"已掌握 5" },
+    { k:"概念不清", l:"概念不清 7" },
+    { k:"公式记错", l:"公式记错 4" }
+  ];
+  let cur = "all";
+
+  function render(){
+    const list = DATA.errors.filter(e => {
+      if (cur === "all") return true;
+      if (cur === "模糊" || cur === "已掌握") return e.m === cur;
+      return e.cause.includes(cur);
+    });
+    $("#errs").innerHTML = list.map(e => {
+      const mcls = e.m === "模糊" ? "fuzzy" : e.m === "已掌握" ? "ok" : "no";
+      const tags = e.cause.map(c => `<span class="tg">${c}</span>`).join("");
+      return `<div class="err">
+        <div class="err-h">
+          <span class="err-n">Q${e.n}</span>
+          <span class="err-q">${md(e.q)}</span>
+          <span class="mast ${mcls}">${e.m}</span>
+        </div>
+        <div class="err-pt">${e.pt}</div>
+        ${e.gap !== "—" ? `<div class="err-row"><span class="k">卡点</span><span>${md(e.gap)}</span></div>` : ""}
+        <div class="err-row"><span class="k">思路</span><span>${md(e.fix)}</span></div>
+        ${tags ? `<div class="err-tags">${tags}</div>` : ""}
+      </div>`;
+    }).join("") || `<div class="panel" style="padding:24px;text-align:center;color:var(--muted)">没有符合条件的错题</div>`;
+    typeset();
+  }
+
+  $("#chips").innerHTML = chips.map(c =>
+    `<button class="chip${c.k==="all"?" on":""}" data-k="${c.k}">${c.l}</button>`).join("");
+
+  $("#chips").addEventListener("click", ev => {
+    const b = ev.target.closest(".chip");
+    if (!b) return;
+    cur = b.dataset.k;
+    document.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === b));
+    render();
+  });
+
+  render();
+})();
+
+/* 今日清单 */
+(function(){
+  const KEY = "kyshu2.tasks.";
+
+  function build(){
+    $("#tasks").innerHTML = `
+      <div class="task-prog">
+        <span id="tp-label">0 / ${DATA.tasks.length}</span>
+        <div class="bar"><i id="tp-bar" style="width:0%"></i></div>
+        <button class="btn" id="resetTasks">重置</button>
+      </div>` +
+      DATA.tasks.map(t => `
+        <label class="task">
+          <input type="checkbox" data-id="${t.id}" ${localStorage.getItem(KEY+t.id)==="1"?"checked":""}>
+          <span class="task-b">
+            <span class="task-t">${md(t.t)}</span>
+            <span class="task-m">${md(t.m)} · <b>${t.tag}</b></span>
+          </span>
+          <span class="min">${t.min}′</span>
+        </label>`).join("");
+
+    refresh();
+    typeset();
+
+    $("#tasks").addEventListener("change", ev => {
+      const cb = ev.target.closest("input[type=checkbox]");
+      if (!cb) return;
+      localStorage.setItem(KEY + cb.dataset.id, cb.checked ? "1" : "0");
+      refresh();
+    });
+
+    $("#resetTasks").addEventListener("click", () => {
+      DATA.tasks.forEach(t => localStorage.removeItem(KEY + t.id));
+      build();
+    });
+  }
+
+  function refresh(){
+    const boxes = [...document.querySelectorAll("#tasks input[type=checkbox]")];
+    const done = boxes.filter(b => b.checked).length;
+    $("#tp-label").textContent = `${done} / ${boxes.length}`;
+    $("#tp-bar").style.width = (done / boxes.length * 100) + "%";
+  }
+
+  build();
+})();
+
+/* 9 周表 */
+$("#weeks").innerHTML = DATA.weeks.map(w => `
+  <div class="wk${w.now?" now":""}">
+    <div class="wk-w"><b>${w.w}</b>${w.now?"<span style='color:var(--accent)'>本周</span>":""}</div>
+    <div class="wk-d">${w.d}</div>
+    <div class="wk-t">${w.t}</div>
+  </div>`).join("");
+
+typeset();
+</script>
+</body>
+</html>
