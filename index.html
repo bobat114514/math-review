@@ -71,6 +71,25 @@ header.top{
 .stat span{font-size:12px;color:var(--muted)}
 .stat.urgent b{color:var(--red)}
 
+/* ---------- 战绩 ---------- */
+.ach-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media(min-width:640px){.ach-stats{grid-template-columns:repeat(4,1fr)}}
+.ach-stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;box-shadow:var(--sh)}
+.ach-stat b{display:block;font-size:22px;font-weight:700;letter-spacing:-.5px;color:var(--accent);line-height:1.25}
+.ach-stat span{font-size:11.5px;color:var(--muted)}
+.today-strip{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 9%,var(--card)),var(--card));border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));border-radius:12px;padding:10px 14px;font-size:12.5px;margin-bottom:14px}
+.today-strip b{color:var(--accent)}
+.badges{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:560px){.badges{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.badges{grid-template-columns:repeat(5,1fr)}}
+.badge{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;box-shadow:var(--sh)}
+.badge.on{border-color:color-mix(in srgb,var(--accent) 38%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 7%,var(--card)),var(--card))}
+.badge.off{opacity:.42;filter:grayscale(1)}
+.badge .ic{font-size:25px;line-height:1}
+.badge .nm{font-size:12.5px;font-weight:600;margin-top:7px}
+.badge .ds{font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.45}
+.badge .pr{font-size:10px;color:var(--accent);font-weight:700;margin-top:6px}
+
 /* ---------- section ---------- */
 h2.sec{font-size:14px;font-weight:650;margin:34px 0 14px;display:flex;align-items:center;gap:8px;letter-spacing:.3px}
 h2.sec::before{content:"";width:3px;height:15px;border-radius:2px;background:var(--accent)}
@@ -213,6 +232,12 @@ footer code{background:color-mix(in srgb,var(--muted) 12%,transparent);padding:1
       <div class="panel stat"><b id="s-hours">25</b><span>周有效时长(h)</span></div>
     </div>
   </div>
+
+  <!-- 战绩 -->
+  <h2 class="sec">战绩 <small>别只盯着错题，看看攒下了什么</small></h2>
+  <div class="ach-stats" id="achStats"></div>
+  <div class="today-strip" id="todayStrip"></div>
+  <div class="badges" id="badges"></div>
 
   <!-- BLOCKS -->
   <h2 class="sec">知识体系覆盖 <small>武忠祥基础篇 · 15 块 · 试考年目标：全部至少 ◐</small></h2>
@@ -389,6 +414,21 @@ const DATA = {
     { w:"W7", d:"11/30–12/6", t:"⑫ 向量 + ⑬ 线性方程组" },
     { w:"W8", d:"12/7–12/13", t:"⑭ 特征值 + ⑮ 二次型" },
     { w:"W9", d:"12/14–12/18",t:"全科串讲 + 真题摸底" }
+  ],
+
+  todayStats: { day:90, q:12, mastered:9, fuzzy:3 },
+
+  achievements: [
+    { ic:"🌱", nm:"破土",       ds:"录入第 1 道错题",      on:true },
+    { ic:"📗", nm:"十题",       ds:"累计 10 道题",         on:true },
+    { ic:"📘", nm:"二十题",     ds:"累计 20 道题",         on:true },
+    { ic:"🔥", nm:"单日爆发",   ds:"一天拿下 12 道题",     on:true },
+    { ic:"🎯", nm:"专题收割",   ds:"反常积分专题 12 题",   on:true },
+    { ic:"⚡", nm:"掌握率过半", ds:"14 / 23 = 61%",        on:true },
+    { ic:"🧩", nm:"第 5 章通关", ds:"定积分与反常积分",    on:false, pr:"80%" },
+    { ic:"🧱", nm:"高数通关",   ds:"第 1–9 章全部完成",    on:false, pr:"4 / 9" },
+    { ic:"🏛", nm:"线代通关",   ds:"6 章全部拿下",         on:false, pr:"0 / 6" },
+    { ic:"🎓", nm:"体系完整",   ds:"15 块全部 ◐ 以上",     on:false, pr:"4 / 15" }
   ]
 };
 
@@ -556,6 +596,32 @@ $("#fams").innerHTML = DATA.families.map(f => `
     <div class="fam-d">${md(f.d)}</div>
     <div class="fam-n">${f.n} 题 · ${f.pts}</div>
   </div>`).join("");
+
+/* 战绩 */
+(function(){
+  const total = DATA.errors.length;
+  const done = DATA.errors.filter(e => e.m === "已掌握").length;
+  const rate = Math.round(done / total * 100);
+
+  $("#achStats").innerHTML = [
+    { v: total,       l: "累计题量" },
+    { v: done,        l: "已掌握" },
+    { v: rate + "%",  l: "掌握率" },
+    { v: "第 " + DATA.todayStats.day + " 天", l: "坚持学习" }
+  ].map(s => `<div class="ach-stat"><b>${s.v}</b><span>${s.l}</span></div>`).join("");
+
+  const ts = DATA.todayStats;
+  $("#todayStrip").innerHTML =
+    `今日 <b>${ts.q}</b> 题 · 掌握 <b>${ts.mastered}</b> 道 · 待巩固 <b>${ts.fuzzy}</b> 处 —— 这部分是净增长，不是错题`;
+
+  $("#badges").innerHTML = DATA.achievements.map(a => `
+    <div class="badge ${a.on ? "on" : "off"}">
+      <div class="ic">${a.ic}</div>
+      <div class="nm">${a.nm}</div>
+      <div class="ds">${a.ds}</div>
+      ${a.pr ? `<div class="pr">${a.pr}</div>` : ""}
+    </div>`).join("");
+})();
 
 /* 错题筛选 */
 (function(){
